@@ -8,6 +8,6 @@
 #SBATCH -A cause-lab
 
 source ~/anaconda3/etc/profile.d/conda.sh
-conda activate clam_new
+conda activate PCam_context
 
 python run_experiment_probs.py $1

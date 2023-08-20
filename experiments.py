@@ -70,7 +70,7 @@ def linear_context_experiment(predictor, steps=32, batch_size=128, num_workers=1
                 gc.collect()
                 with torch.no_grad():
                     probs, features = predictor(images)
-                    if input_size == 224: #modele z toolboxa maja softmax juz, transformery nie
+                    if input_size == 224: #models from the toolbox return the probabilities (not logits) unlike transformers
                         probs = torch.softmax(probs, dim=-1)
                     probs_class1 = probs[:,1]
                 curr_probs = torch.cat((curr_probs, probs_class1))
@@ -123,7 +123,7 @@ def experiments_xai(xai_explainer_call, target, predictions, save_pth, steps=32,
             return torch.Tensor(nparray).int().type(torch.int64).to(device)
         else:
             return None
-    step_size=1 #10
+    step_size=1 
     for i in range(start, steps, step_size):
         transform = get_transform(i, color='black', normalize=False, input_size=input_size)
         split='test'
