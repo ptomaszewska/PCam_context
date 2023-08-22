@@ -9,7 +9,7 @@ from functools import partial
 from swin_transformer import SwinTransformer 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-PATH = "./"
+PATH = "./pretrained_models/"
 SWIN = PATH+"pcamswin_4_0.915008544921875_full_no_standarization.pth"
 MAE = PATH+"pcammae_vitb16_3_0.912261962890625_full_no_standarization.pth"
 MOCO = PATH+"pcammocov3_vitb_3_0.91387939453125_full_no_standarization.pth"

@@ -11,11 +11,11 @@ import torch.nn as nn
 import timm.models.vision_transformer
 
 
-class VisionTransformerMAE(timm.models.vision_transformer.VisionTransformer):
+class VisionTransformer(timm.models.vision_transformer.VisionTransformer):
     """ Vision Transformer with support for global average pooling
     """
     def __init__(self, global_pool=False, **kwargs):
-        super(VisionTransformerMAE, self).__init__(**kwargs)
+        super(VisionTransformer, self).__init__(**kwargs)
 
         self.global_pool = global_pool
         if self.global_pool:
