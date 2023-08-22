@@ -1,6 +1,6 @@
 import os
-if 'Context_project' not in os.getcwd():
-    os.chdir('Context_project')
+if 'PCam_context' not in os.getcwd():
+    os.chdir('PCam_context')
 import torch
 from vit import VisionTransformer
 from vit_moco import VisionTransformerMoCo
