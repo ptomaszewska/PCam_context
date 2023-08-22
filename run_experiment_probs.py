@@ -1,6 +1,6 @@
 import os
-if 'Context_project' not in os.getcwd():
-    os.chdir('Context_project')
+if 'PCam_context' not in os.getcwd():
+    os.chdir('PCam_context')
 import torch
 from experiments import linear_context_experiment
 import gc
