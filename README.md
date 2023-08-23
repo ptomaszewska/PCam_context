@@ -3,12 +3,7 @@
 The repository contains the source code for the results presented in the paper **On the benefit of context in the form of neighbouring tissues on classification performance** (TBD). In the paper, we investigate the benefit of access to contextual information when doing the classification of histopathological tissues. We also evaluate whether images with different context sizes given to the model may result in different predictions. 
 
 ### Setup
-We recommend creating a new conda virtual environment:
-```
-conda create -n PCam_context python=3.8 -y
-conda activate PCam_context
-pip install -r requirements.txt
-```
+We recommend creating new conda virtual environments for the project. Unfortunately, it is not possible to run all the experiments with one environment due to conflicts in packages. The procedure described in ```env_setup.sh``` can be used to create environment suitable to run all experiments except the ones with MAE model that requires the environment that can be set up using commands specified in ```env_setup_MAE.sh```.
 
 ### Usage
 
@@ -18,5 +13,3 @@ In the code, the inference is performed using two types of models (convolutional
 Note that in bash scripts, it is necessary to specify a path to files with data and a path where the output is supposed to be saved.
 
 License This project is under the MIT license. See LICENSE for details.
-
-### Cite
