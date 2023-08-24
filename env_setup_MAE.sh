@@ -1,4 +1,4 @@
-conda create -n PCam_context_MAE python=3.8
+conda create -n PCam_context_MAE python=3.8 -y
 conda activate PCam_context_MAE
 
 conda install pytorch==1.7.1 torchvision torchaudio cudatoolkit=11.0 -c pytorch
