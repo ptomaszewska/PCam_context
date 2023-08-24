@@ -8,6 +8,11 @@
 #SBATCH -A cause-lab
 
 source ~/anaconda3/etc/profile.d/conda.sh
-conda activate PCam_context
+
+if [[ $1 == "pcammae"]]; then
+    conda activate PCam_context_MAE
+else
+    conda activate PCam_context
+fi
 
 python run_experiment_probs.py $1
