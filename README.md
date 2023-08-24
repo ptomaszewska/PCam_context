@@ -1,4 +1,4 @@
-# On the benefit of context in the form of neighbouring tissues on classification performance
+# Does context matter in digital pathology?
 
 The repository contains the source code for the results presented in the paper **Does context matter in digital pathology?**. In the paper, we investigate the benefit of access to contextual information when doing the classification of histopathological tissues. We also evaluate whether images with different context sizes given to the model may result in different predictions. 
 
