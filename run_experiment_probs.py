@@ -47,7 +47,7 @@ else:
             features = model.forward_features(x)
             if name == 'pcamswin':
                 preds = model.head(features)
-            if name == 'pcammae':
+            elif name == 'pcammae':
                 preds = model.forward(x)
             else:
                 preds = model.forward_head(features)
