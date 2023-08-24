@@ -9,7 +9,8 @@
 
 source ~/anaconda3/etc/profile.d/conda.sh
 
-if [[ $1 == "pcammae"]]; then
+if [[ $1 == "pcammae" ]]
+then
     conda activate PCam_context_MAE
 else
     conda activate PCam_context
