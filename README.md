@@ -1,6 +1,6 @@
 # On the benefit of context in the form of neighbouring tissues on classification performance
 
-The repository contains the source code for the results presented in the paper **On the benefit of context in the form of neighbouring tissues on classification performance** (TBD). In the paper, we investigate the benefit of access to contextual information when doing the classification of histopathological tissues. We also evaluate whether images with different context sizes given to the model may result in different predictions. 
+The repository contains the source code for the results presented in the paper **Does context matter in digital pathology?**. In the paper, we investigate the benefit of access to contextual information when doing the classification of histopathological tissues. We also evaluate whether images with different context sizes given to the model may result in different predictions. 
 
 ### Setup
 We recommend creating new conda virtual environments for the project. Unfortunately, it is not possible to run all the experiments with one environment due to conflicts in packages. The procedure described in ```env_setup.sh``` can be used to create environment suitable to run all experiments except the ones with MAE model that requires the environment that can be set up using commands specified in ```env_setup_MAE.sh```.
