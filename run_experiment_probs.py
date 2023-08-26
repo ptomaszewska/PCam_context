@@ -55,4 +55,4 @@ else:
         return preds, features
         
 csv_name = 'Experiments_directcall.csv'
-linear_context_experiment(predict_and_features, save=True, pretrained=name, csv_name=csv_name, batch_size=32, input_size=input_size, steps=steps, step_size=step_size, additional_steps=additional_steps)
+linear_context_experiment(predict_and_features, save=True, model_name=name, csv_name=csv_name, batch_size=32, input_size=input_size, steps=steps, step_size=step_size, additional_steps=additional_steps)

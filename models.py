@@ -9,11 +9,11 @@ from functools import partial
 from swin_transformer import SwinTransformer 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-PATH = "./pretrained_models/"
-SWIN = PATH+"pcamswin_4_0.915008544921875_full_no_standarization.pth"
-MAE = PATH+"pcammae_vitb16_3_0.912261962890625_full_no_standarization.pth"
-MOCO = PATH+"pcammocov3_vitb_3_0.91387939453125_full_no_standarization.pth"
-SUP = PATH+"pcamsup_vitb16_imagenet21k_1_0.9102783203125_full_no_standarization.pth"
+PRETRAINED_PATH = "./pretrained_models/"
+SWIN = PRETRAINED_PATH+"pcamswin_4_0.915008544921875_full_no_standarization.pth"
+MAE = PRETRAINED_PATH+"pcammae_vitb16_3_0.912261962890625_full_no_standarization.pth"
+MOCO = PRETRAINED_PATH+"pcammocov3_vitb_3_0.91387939453125_full_no_standarization.pth"
+SUP = PRETRAINED_PATH+"pcamsup_vitb16_imagenet21k_1_0.9102783203125_full_no_standarization.pth"
 checkpoints = {'pcamswin':SWIN, 'pcammae':MAE, 'pcammoco':MOCO, 'pcamsup':SUP}
 
 def build_swin_model():
@@ -37,8 +37,9 @@ def build_model(name):
     if name == 'pcamswin':
         model = build_swin_model()
     elif name == 'pcammae':
+        # using default settings for mae-finetune
         model = VisionTransformerMAE(
-            drop_path_rate=0.1, global_pool=True,  # using default settings for mae-finetune
+            drop_path_rate=0.1, global_pool=True,
             patch_size=16, embed_dim=768, depth=12, num_heads=12,
             mlp_ratio=4, qkv_bias=True,
             norm_layer=partial(torch.nn.LayerNorm, eps=1e-6)

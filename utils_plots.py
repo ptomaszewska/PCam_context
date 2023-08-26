@@ -1,6 +1,6 @@
 import os
-if '/Context_project' not in os.getcwd():
-    os.chdir('../Context_project/')
+if '/PCam_context' not in os.getcwd():
+    os.chdir('../PCam_context/')
 
 import pandas as pd
 import numpy as np
@@ -13,7 +13,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-HOME_PATH = "/mnt/evafs/faculty/home/msperkowski/Context_project/"
+HOME_PATH = "./"
 PATH_save_plots='./plots/'
 models = ['pcamswin', 'pcammoco', 'pcamsup', 'pcammae', 'resnet18-pcam', 'densenet121-pcam']
 NAMEMAP = {'pcamswin':'Swin', 'pcammoco':'MoCo', 'pcamsup':'supViT', 'pcammae':'MAE', 'resnet18-pcam':'ResNet18', 
