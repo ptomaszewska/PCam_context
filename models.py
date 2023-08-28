@@ -1,5 +1,4 @@
 import os
-
 if "PCam_context" not in os.getcwd():
     os.chdir("PCam_context")
 import torch
@@ -11,6 +10,7 @@ from swin_transformer import SwinTransformer
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+# Pretrained models checkpoints paths
 PRETRAINED_PATH = "./pretrained_models/"
 SWIN = PRETRAINED_PATH + "pcamswin_4_0.915008544921875_full_no_standarization.pth"
 MAE = PRETRAINED_PATH + "pcammae_vitb16_3_0.912261962890625_full_no_standarization.pth"
@@ -23,6 +23,11 @@ checkpoints = {"pcamswin": SWIN, "pcammae": MAE, "pcammoco": MOCO, "pcamsup": SU
 
 
 def build_swin_model():
+    """Initialize the pcamswin model with correct parameters and head replaced for classification task.
+
+    Returns:
+        Initialized pcamswin model.
+    """
     model = SwinTransformer(
         img_size=(224, 224),
         embed_dim=128,
@@ -40,6 +45,14 @@ def build_swin_model():
 
 
 def build_model(name):
+    """Initialize transformer models class with correct parameters set.
+
+    Args:
+        name (str): Model name to initialize. One of ["pcamswin", "pcammoco", "pcamsup", "pcamvit"].
+
+    Returns:
+        Initialized transformer model.
+    """
     model = None
     if name == "pcamswin":
         model = build_swin_model()
@@ -74,6 +87,15 @@ def build_model(name):
 
 
 def get_transformer_model(name, device="cpu"):
+    """Initializes and loads pretrained weight for the specific transformer models.
+
+    Args:
+        name (str): Model name to initialize and load weights. One of ["pcamswin", "pcammoco", "pcamsup", "pcamvit"].
+        device (str, optional): Torch device for the model to be cast to. Either "cpu", "gpu" or a torch device. Defaults to "cpu".
+
+    Returns:
+        The initialized model with weights loaded.
+    """
     model = build_model(name)
     if "pcammoco" in name:
         name = "pcammoco"

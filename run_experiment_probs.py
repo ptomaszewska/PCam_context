@@ -1,15 +1,13 @@
 import os
-
 if "PCam_context" not in os.getcwd():
     os.chdir("PCam_context")
 import torch
 from experiments import linear_context_experiment
 import gc
 from models import get_transformer_model
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
 import argparse
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
 parser = argparse.ArgumentParser(description="PCAM pretrained model")
 parser.add_argument("name", help="pretrained model name")
 args = parser.parse_args()
