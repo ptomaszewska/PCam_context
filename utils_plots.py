@@ -8,11 +8,13 @@ import seaborn as sns
 import torch
 import torchmetrics
 import warnings
+
 warnings.filterwarnings("ignore")
 
 
 HOME_PATH = "./"
 PATH_save_plots = "./plots/"
+# Model names in experiments
 models = [
     "pcamswin",
     "pcammoco",
@@ -21,6 +23,7 @@ models = [
     "resnet18-pcam",
     "densenet121-pcam",
 ]
+# Map model names for visualizations
 NAMEMAP = {
     "pcamswin": "Swin",
     "pcammoco": "MoCo",
@@ -39,6 +42,14 @@ rocauc = torchmetrics.AUROC(task="binary")
 
 
 def get_pessimistic_swin_lastprob(dataframe_probs):
+    """Transform and Calculate the pessimistic probabilities for the last transformer step.
+
+    Args:
+        dataframe_probs (pd.DataFrame): dataframe of the experiments probabilities results.
+
+    Returns:
+        tuple of (np.array, pd.DataFrame): tuple consisting of an array of the pessimistic metrics and the probabilities frame.
+    """
     swin96_prob = swin224_to_96_prob(dataframe_probs)
     true = torch.Tensor(swin96_prob.loc[:, "label"])
     probs = torch.Tensor(swin96_prob.loc[:, "32"])
@@ -54,6 +65,15 @@ def get_pessimistic_swin_lastprob(dataframe_probs):
 
 
 def swin224_to_96_mets(dataframe_met, dataframe_probs):
+    """Transforms the transformer results with size of 224 into convolution compatible format for comparison. Every 7th pixel on 224 image size corresponds to every 3rd pixel on 96 original image size. Last step on convolutions, 32, is between 74th and 75th pixel on transformers, therefore the furthest probability from the correct label is used.
+
+    Args:
+        dataframe_met (pd.DataFrame): Metrics dataframe for one of the 224 models.
+        dataframe_probs (pd.DataFrame): Probabilities dataframe for one of the 224 models.
+
+    Returns:
+        tuple of (pd.DataFrame, pd.DataFrame): A tuple consisting of transformed results, first consists of the metrics and the second of probabilities.
+    """
     pessimistic_result, transformer_probs = get_pessimistic_swin_lastprob(
         dataframe_probs
     )
@@ -80,6 +100,14 @@ def swin224_to_96_mets(dataframe_met, dataframe_probs):
 
 
 def swin224_to_96_pred(dataframe):
+    """Transform the transformer 224 format predictions to convolutional format of 96.
+
+    Args:
+        dataframe (pd.DataFrame): dataframe of predictions.
+
+    Returns:
+        pd.DataFrame: dataframe of transformed predictions.
+    """
     last_results = dataframe["label"].copy()
     error_74 = dataframe.loc[:, "74"] != dataframe.loc[:, "label"]
     last_results[error_74] = dataframe.loc[error_74, "74"]
@@ -106,6 +134,14 @@ def swin224_to_96_pred(dataframe):
 
 
 def swin224_to_96_prob(dataframe):
+    """_summary_
+
+    Args:
+        dataframe (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     last_results = dataframe["74"].copy()
     index_1 = dataframe.loc[:, "label"] == 1
     last_results[index_1] = dataframe[["74", "75"]].min(axis=1).loc[index_1]
@@ -132,6 +168,14 @@ def swin224_to_96_prob(dataframe):
 
 
 def standardize_result(dframe):
+    """Standardize the results to the metric results on the experiments with full images.
+
+    Args:
+        dframe (pd.DataFrame): dataframe with the metrics results.
+
+    Returns:
+        pd.DataFrame: standardized results.
+    """
     for met in ["Accuracy", "F1_score", "Precision", "Recall", "AUC"]:
         dframe.loc[dframe["Metric"] == met, "Score"] -= dframe.loc[
             np.logical_and(dframe["Metric"] == met, dframe["cut_pixels"] == 0), "Score"
@@ -140,6 +184,14 @@ def standardize_result(dframe):
 
 
 def add_rocauc_224(model):
+    """Function for adding the roc auc metric after experiments run, using probabilities.
+
+    Args:
+        model (str): name of the model.
+
+    Returns:
+        tuple of (pd.DataFrame, str): tuple with the new frame of metric results and the path to metrics.
+    """
     model_pth_probs = (
         HOME_PATH + f"pretrained_experiments/{model}/Experiments_directcall_probs.csv"
     )
@@ -170,6 +222,14 @@ def add_rocauc_224(model):
 
 
 def load_results_probs(modelname):
+    """Load the saved experiments results into proper plotting formats.
+
+    Args:
+        modelname (str): name of the model.
+
+    Returns:
+        tuple of types (pd.DataFrame, pd.DataFrame): tuple of pandas Dataframes, first one consisting of the experiment metrics and second one containing prediction probabilities.
+    """
     input_size = 96
     if "-" not in modelname:
         input_size = 224
@@ -192,6 +252,11 @@ def load_results_probs(modelname):
 
 
 def plot_single_standard(modelname):
+    """Plot a single models metrics.
+
+    Args:
+        modelname (str): Name of the model to plot.
+    """
     exp_result_standard, _ = load_results_probs(modelname)
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.lineplot(exp_result_standard, y="Score", x="cut_pixels", hue="Metric", ax=ax)
@@ -204,6 +269,12 @@ def plot_single_standard(modelname):
 
 
 def plot_multiple(models, sharey=False):
+    """Plot multiple models metrics on subplots.
+
+    Args:
+        models (_type_): Name of the models to plot.
+        sharey (bool, optional): Whether to share y axis. Defaults to False.
+    """
     joined_results = pd.concat([load_results_probs(model)[0] for model in models])
     fig, ax = plt.subplots(
         nrows=2, ncols=2, figsize=(12, 7), sharey=sharey, sharex=True
@@ -247,6 +318,15 @@ def plot_multiple(models, sharey=False):
 
 
 def get_pred_type(pred, true):
+    """Returns the prediction type for the prediction and true label. Values in ["TN", "FP", "TP", "FN"].
+
+    Args:
+        pred (int): prediction class
+        true (int): true label class
+
+    Returns:
+        str: type of classifications prediction
+    """
     if true == 0:
         if pred == 0:
             return "TN"
@@ -260,6 +340,14 @@ def get_pred_type(pred, true):
 
 
 def melt_probs(dataframe):
+    """Melt the dataframe of probabilities and add the prediction type.
+
+    Args:
+        dataframe (pd.DataFrame): probabilities dataframe in the wide format.
+
+    Returns:
+        pd.DataFrame: probabilities dataframe in the long format.
+    """
     probs_melt_model = pd.melt(
         dataframe,
         value_vars=dataframe.drop("label", axis=1).columns,
@@ -276,6 +364,14 @@ def melt_probs(dataframe):
 
 
 def walking_change(df_melted):
+    """Calculate the change from the previous step in the probabilities.
+
+    Args:
+        df_melted (pd.DataFrame): Dataframe of probabilities in the long format
+
+    Returns:
+        pd.DataFrame: Dataframe of the changes in probabilities, with the change of prediction type.
+    """
     probs_melt_next = df_melted[df_melted["cut_pixels"] != 32].join(
         df_melted[df_melted["cut_pixels"] != 0].reset_index(drop=True), rsuffix="_next"
     )
@@ -340,6 +436,15 @@ def walking_change(df_melted):
 
 
 def plot_walkingchange(modelname, hue="label"):
+    """Plot the walking change of probabilities for a single model.
+
+    Args:
+        modelname (str): Name of the model to plot.
+        hue (str, optional): The column to group by for the plotting. Defaults to "label".
+
+    Returns:
+        tuple of (pd.DataFrame, pd.Dataframe): tuple of the probabilities dataframe and the melted change dataframe.
+    """
     if hue not in [
         "label",
         "pred",
@@ -363,6 +468,12 @@ def plot_walkingchange(modelname, hue="label"):
 
 
 def plot_predtypes(modelname, with_markers=False):
+    """Plot the prediction types for a single model.
+
+    Args:
+        modelname (str): Name of the model to plot.
+        with_markers (bool, optional): Whether to add markers for the data points. Defaults to False.
+    """
     if with_markers == True:
         figsize = (15, 15)
         step = 2
@@ -430,6 +541,13 @@ def plot_predtypes(modelname, with_markers=False):
 
 
 def changing_probs_sample_images(probs_model_all, changes_all, model_index):
+    """Plot the changing probabilities for sample most often changing images.
+
+    Args:
+        probs_model_all (pd.DataFrame): probabilities for all models.
+        changes_all (pd.DataFrame): changes dataframe in the wide format.
+        model_index (pd.index): index for the specific model.
+    """
     probs_model = probs_model_all[model_index]
     changes_sum = changes_all[model_index].sum(axis=1)
 
@@ -460,6 +578,14 @@ def changing_probs_sample_images(probs_model_all, changes_all, model_index):
 
 
 def plot_n_changes_context(changes_all):
+    """Plot the number of changes for all models.
+
+    Args:
+        changes_all (pd.DataFrame): changes dataframe in the wide format.
+
+    Returns:
+        pd.DataFrame: melted sum of changes in the long format.
+    """
     changes_sum_melt_all = []
     for j, model in enumerate(models):
         changes = changes_all[j]
@@ -495,6 +621,12 @@ def plot_n_changes_context(changes_all):
 
 
 def plot_histograms(walking_change_all, changes_sum_melt_all):
+    """Plot the prediction type change histograms.
+
+    Args:
+        walking_change_all (pd.DataFrame): walking change dataframe in the long format.
+        changes_sum_melt_all (pd.DataFrame): summed changes dataframe in the long format.
+    """
     for j, model in enumerate(models):
         walking_change_model = walking_change_all[j]
         print(model)
@@ -529,6 +661,11 @@ def plot_histograms(walking_change_all, changes_sum_melt_all):
 
 
 def prediction_changes_per_images(changes_all):
+    """Plot the number of prediction changes in logarithimc scale for all models..
+
+    Args:
+        changes_all (pd.DataFrame): changes dataframe in the wide format.
+    """
     plt.figure(figsize=(6, 4))
     for j, model in enumerate(models):
         changes_sum = changes_all[j].sum(axis=1)
