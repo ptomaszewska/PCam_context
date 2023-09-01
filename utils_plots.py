@@ -134,13 +134,13 @@ def swin224_to_96_pred(dataframe):
 
 
 def swin224_to_96_prob(dataframe):
-    """_summary_
+    """Transform the transformer 224 format probabilities to convolutional format of 96.
 
     Args:
-        dataframe (_type_): _description_
+        dataframe (pd.DataFrame): dataframe of predictions.
 
     Returns:
-        _type_: _description_
+        pd.DataFrame: dataframe of transformed predictions.
     """
     last_results = dataframe["74"].copy()
     index_1 = dataframe.loc[:, "label"] == 1
